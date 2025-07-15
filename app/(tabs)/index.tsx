@@ -8,7 +8,8 @@ import {
   setAudioModeAsync,
   useAudioRecorderState,
 } from "expo-audio";
-import SignalIcon from "../../components/SignalIcon";
+import SignalIcon from "@/components/SignalIcon";
+import SolidCircleIcon from "@/components/SolidCircleIcon";
 
 export default function Home() {
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
@@ -48,8 +49,9 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <View style={{ backgroundColor: "gray", flex: 5 }}></View>
+      <View style={{ backgroundColor: "gray", flex: 2 }}></View>
       <View style={{ backgroundColor: "silver", flex: 1 }}>
+        <SolidCircleIcon />  
         <SignalIcon />
       </View>
     </View>
