@@ -1,8 +1,17 @@
 import { Tabs } from "expo-router";
+import { StyleSheet } from "react-native";
+import colors from "@/constants/colors";
 
 export default function TabLayout() {
   return (
-    <Tabs screenOptions={{ headerShown: false }}>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: styles.tabBarStyle,
+        tabBarActiveTintColor: colors.button,
+        tabBarInactiveTintColor: colors.primary,
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{ headerShown: false, tabBarLabel: "Home" }}
@@ -14,3 +23,10 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBarStyle: {
+    backgroundColor: colors.secondary,
+    borderColor: colors.secondary,
+  },
+});

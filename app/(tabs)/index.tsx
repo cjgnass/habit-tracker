@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, StyleSheet, Button, Pressable } from "react-native";
+import { View, StyleSheet, Button, Pressable, Text } from "react-native";
 import {
   useAudioPlayer,
   useAudioRecorder,
@@ -8,13 +8,29 @@ import {
   setAudioModeAsync,
   useAudioRecorderState,
 } from "expo-audio";
-import SignalIcon from "@/components/SignalIcon";
-import SolidCircleIcon from "@/components/SolidCircleIcon";
+import {
+  useFonts,
+  Inter_400Regular,
+  Inter_700Bold,
+} from "@expo-google-fonts/inter";
+import Fonts from "@/constants/fonts";
+import AssistantButton from "@/components/AssistantButton";
+import colors from "@/constants/colors";
 
 export default function Home() {
+  const [fontsLoaded] = useFonts({
+    [Fonts.regular]: Inter_400Regular,
+    [Fonts.bold]: Inter_700Bold,
+  });
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(audioRecorder);
   const audioPlayer = useAudioPlayer("");
+  const [assistantActive, setAssistantActive] = useState(false);
+  const [habits, setHabits] = useState(["Habbit 1", "Habbit 2"]);
+
+  const addHabit = () => {
+    setHabits([...habits, `Habit ${habits.length + 1}`]);
+  };
 
   const startRecording = async () => {
     await audioRecorder.prepareToRecordAsync();
@@ -33,6 +49,10 @@ export default function Home() {
     audioPlayer.play();
   };
 
+  const handleButtonPress = () => {
+    setAssistantActive(!assistantActive);
+  };
+
   useEffect(() => {
     (async () => {
       const status = await AudioModule.requestRecordingPermissionsAsync();
@@ -49,10 +69,24 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <View style={{ backgroundColor: "gray", flex: 2 }}></View>
-      <View style={{ backgroundColor: "silver", flex: 1 }}>
-        <SolidCircleIcon />  
-        <SignalIcon />
+      <View style={styles.habitsHeader}>
+        <Text style={styles.header}>Habits</Text>
+      </View>
+      <View style={styles.mainContainer}>
+        <View style={styles.habitsContainer}>
+          {habits.map((habit, index) => (
+            <Text key={index} style={styles.habitsText}>
+              {habit}
+            </Text>
+          ))}
+        </View>
+      </View>
+      <View style={styles.assistantContainer}>
+        <AssistantButton
+          onPress={handleButtonPress}
+          size={100}
+          active={assistantActive}
+        />
       </View>
     </View>
   );
@@ -62,7 +96,38 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: "#ecf0f1",
+    backgroundColor: colors.background,
     padding: 10,
+  },
+  header: { fontFamily: Fonts.bold, fontSize: 30, color: colors.primary },
+  mainContainer: {
+    borderRadius: 20,
+    margin: 20,
+    backgroundColor: colors.primary,
+    flex: 4,
+  },
+  assistantContainer: {
+    backgroundColor: colors.background,
+    flex: 0.5,
+    margin: 20,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  assistantButton: {},
+  habitsHeader: {
+    flex: 0.5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  habitsContainer: {
+    flex: 7,
+    padding: 10,
+  },
+  habitsText: {
+    fontFamily: Fonts.regular,
+    fontSize: 20,
+    margin: 10,
+    color: colors.background,
   },
 });
