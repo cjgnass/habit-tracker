@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { View, StyleSheet, Button, Pressable, Text } from "react-native";
+import {
+  ScrollView,
+  View,
+  StyleSheet,
+  Button,
+  Pressable,
+  Text,
+} from "react-native";
 import {
   useAudioPlayer,
   useAudioRecorder,
@@ -16,7 +23,8 @@ import {
 import Fonts from "@/constants/fonts";
 import AssistantButton from "@/components/AssistantButton";
 import colors from "@/constants/colors";
-
+import Habit from "@/components/Habit";
+import QuantativeHabit from "@/components/QuantativeHabit";
 export default function Home() {
   const [fontsLoaded] = useFonts({
     [Fonts.regular]: Inter_400Regular,
@@ -72,15 +80,17 @@ export default function Home() {
       <View style={styles.habitsHeader}>
         <Text style={styles.header}>Habits</Text>
       </View>
-      <View style={styles.mainContainer}>
-        <View style={styles.habitsContainer}>
-          {habits.map((habit, index) => (
-            <Text key={index} style={styles.habitsText}>
-              {habit}
-            </Text>
-          ))}
-        </View>
-      </View>
+      <ScrollView
+        style={styles.mainContainer}
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
+        <Habit name={"Habit 1"} />
+        <Habit name={"Habit 2"} />
+        <Habit name={"Habit 3"} />
+        <Habit name={"Habit 1"} />
+        <Habit name={"Habit 2"} />
+        <Habit name={"Habit 3"} />
+      </ScrollView>
       <View style={styles.assistantContainer}>
         <AssistantButton
           onPress={handleButtonPress}
@@ -104,11 +114,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     margin: 20,
     backgroundColor: colors.primary,
-    flex: 4,
+    flex: 1,
+    padding: 20,
+    overflow: "hidden",
   },
   assistantContainer: {
     backgroundColor: colors.background,
-    flex: 0.5,
+    flex: 0.15,
     margin: 20,
     borderRadius: 20,
     alignItems: "center",
@@ -116,13 +128,9 @@ const styles = StyleSheet.create({
   },
   assistantButton: {},
   habitsHeader: {
-    flex: 0.5,
+    flex: 0.1,
     justifyContent: "center",
     alignItems: "center",
-  },
-  habitsContainer: {
-    flex: 7,
-    padding: 10,
   },
   habitsText: {
     fontFamily: Fonts.regular,

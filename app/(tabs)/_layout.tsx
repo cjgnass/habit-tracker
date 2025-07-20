@@ -28,5 +28,6 @@ const styles = StyleSheet.create({
   tabBarStyle: {
     backgroundColor: colors.secondary,
     borderColor: colors.secondary,
+    height: "8%",
   },
 });
