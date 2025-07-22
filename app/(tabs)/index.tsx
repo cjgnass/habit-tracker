@@ -25,6 +25,8 @@ import AssistantButton from "@/components/AssistantButton";
 import colors from "@/constants/colors";
 import Habit from "@/components/Habit";
 import QuantativeHabit from "@/components/QuantativeHabit";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 export default function Home() {
   const [fontsLoaded] = useFonts({
     [Fonts.regular]: Inter_400Regular,
@@ -84,12 +86,7 @@ export default function Home() {
         style={styles.mainContainer}
         contentContainerStyle={{ flexGrow: 1 }}
       >
-        <Habit name={"Habit 1"} />
-        <Habit name={"Habit 2"} />
-        <Habit name={"Habit 3"} />
-        <Habit name={"Habit 1"} />
-        <Habit name={"Habit 2"} />
-        <Habit name={"Habit 3"} />
+        <Habit />
       </ScrollView>
       <View style={styles.assistantContainer}>
         <AssistantButton
