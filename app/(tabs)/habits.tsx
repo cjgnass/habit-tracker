@@ -9,6 +9,7 @@ import BackIcon from "@/components/BackIcon";
 export default function Habits() {
   const [addingHabit, setAddingHabit] = useState(false);
   const mainButtonSize = 50;
+  const [loading, setLoading] = useState(false);
 
   const render = () => {
     return !addingHabit ? (
@@ -16,7 +17,7 @@ export default function Habits() {
         <Pressable
           onPress={() => setAddingHabit(true)}
           style={[
-            styles.mainButton,
+            styles.switchButton,
             {
               width: mainButtonSize,
               height: mainButtonSize,
@@ -30,20 +31,10 @@ export default function Habits() {
       </View>
     ) : (
       <View>
-        <View style={styles.addHabitHeaderContainer}>
-          <Text
-            style={{
-              fontFamily: Fonts.bold,
-              fontSize: 20,
-            }}
-          >
-            Add Habit
-          </Text>
-        </View>
         <Pressable
           onPress={() => setAddingHabit(false)}
           style={[
-            styles.mainButton,
+            styles.switchButton,
             {
               width: mainButtonSize,
               height: mainButtonSize,
@@ -53,13 +44,6 @@ export default function Habits() {
         >
           <BackIcon width={mainButtonSize} height={mainButtonSize} />
         </Pressable>
-        <View style={styles.addHabitBodyContainer}>
-          <Text> body </Text>
-          <Text> body </Text>
-          <Text> body </Text>
-          <Text> body </Text>
-          <Text> body </Text>
-        </View>
       </View>
     );
   };
@@ -90,7 +74,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.bold,
     fontSize: 30,
   },
-  mainButton: {
+  switchButton: {
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
@@ -103,13 +87,5 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     padding: 15,
-  },
-  addHabitHeaderContainer: {
-    flex: 0.2,
-    justifyContent: "center",
-  },
-  addHabitBodyContainer: {
-    flex: 1,
-    backgroundColor: "gray",
   },
 });
