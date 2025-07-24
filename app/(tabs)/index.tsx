@@ -62,13 +62,24 @@ export default function Home() {
   const handleButtonPress = async () => {
     try {
       setAssistantActive(!assistantActive);
-      const value = await AsyncStorage.getItem("@habits");
-      console.log(value);
     } catch (err) {
       console.log(err);
     }
   };
 
+  const displayHabits = async () => {
+    try {
+      const value = await AsyncStorage.getItem("@habits");
+
+      const habits = JSON.parse(value);
+      Object.keys(habits).forEach((habitName) => {
+        const habit = habits[habitsName];
+        return <Habit name={habitName} />;
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
   useEffect(() => {
     (async () => {
       const status = await AudioModule.requestRecordingPermissionsAsync();
@@ -92,7 +103,7 @@ export default function Home() {
         style={styles.mainContainer}
         contentContainerStyle={{ flexGrow: 1 }}
       >
-        <Habit />
+        {displayHabits}
       </ScrollView>
       <View style={styles.assistantContainer}>
         <AssistantButton

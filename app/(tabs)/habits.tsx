@@ -26,7 +26,7 @@ export default function Habits() {
 
   const handleBack = () => {
     setAddingHabit(false);
-    setHabit("");
+    setHabitName("");
     setTimesPerDay(0);
     setSelectedDays([]);
   };
@@ -34,7 +34,6 @@ export default function Habits() {
   const handleAddHabit = async () => {
     try {
       const habit = {
-        habitName,
         timesPerDay: parseInt(timesPerDay),
         selectedDays,
         streak: 0,
@@ -42,11 +41,10 @@ export default function Habits() {
         createdAt: new Date(),
       };
       const habitsJson = await AsyncStorage.getItem("@habits");
-      const habits = habitsJson ? JSON.parse(habitsJson) : [];
-      habits.push(habit);
+      const habits = habitsJson ? JSON.parse(habitsJson) : {};
+      habits[habitName] = habit;
       await AsyncStorage.setItem("@habits", JSON.stringify(habits));
-      console.log(habit);
-      // handleBack();
+      handleBack();
     } catch (err) {
       console.log(err);
     }
