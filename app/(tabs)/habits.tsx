@@ -8,13 +8,15 @@ import {
   Text,
   Pressable,
 } from "react-native";
-import { useState, useEfffect } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useState, useEfffect } from "react";
 import PlusCircleIcon from "@/components/PlusCircleIcon";
 import colors from "@/constants/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Fonts from "@/constants/fonts";
 import BackIcon from "@/components/BackIcon";
 import DayButtons from "@/components/DayButtons";
+import Habit from "@/components/Habit";
 
 export default function Habits() {
   const [addingHabit, setAddingHabit] = useState(false);
@@ -23,7 +25,28 @@ export default function Habits() {
   const [habitName, setHabitName] = useState("");
   const [timesPerDay, setTimesPerDay] = useState(1);
   const [selectedDays, setSelectedDays] = useState([]);
+  const [habitList, setHabitList] = useState([]);
 
+  useFocusEffect(
+    useCallback(() => {
+      const loadHabits = async () => {
+        try {
+          const value = await AsyncStorage.getItem("@habits");
+          const habits = value ? JSON.parse(value) : {};
+          const habitArray = Object.keys(habits).map((habitName) => ({
+            name: habitName,
+            ...habits[habitName],
+          }));
+          // console.log(habitArray);
+          setHabitList(habitArray);
+          console.log(habitList);
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      loadHabits();
+    }, []),
+  );
   const handleBack = () => {
     setAddingHabit(false);
     setHabitName("");
@@ -60,7 +83,7 @@ export default function Habits() {
 
   const render = () => {
     return !addingHabit ? (
-      <View>
+      <View style={{ flex: 1 }}>
         <Pressable
           onPress={() => setAddingHabit(true)}
           style={[
@@ -74,7 +97,14 @@ export default function Habits() {
         >
           <PlusCircleIcon width={mainButtonSize} height={mainButtonSize} />
         </Pressable>
-        <ScrollView style={styles.habitsContainer}></ScrollView>
+        <ScrollView
+          style={styles.habitsContainer}
+          contentContainerStyle={{ flexGrow: 1 }}
+        >
+          {habitList.map((habit) => (
+            <Habit key={habit.name} name={habit.name} />
+          ))}
+        </ScrollView>
       </View>
     ) : (
       <View>
@@ -165,7 +195,7 @@ const styles = StyleSheet.create({
     right: 10,
   },
   habitsContainer: {
-    flex: 1,
+    marginTop: "20%",
   },
   body: {
     flex: 1,

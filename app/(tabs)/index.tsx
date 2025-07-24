@@ -42,7 +42,6 @@ export default function Home() {
           const value = await AsyncStorage.getItem("@habits");
           const habits = value ? JSON.parse(value) : {};
           const today = new Date().getDay();
-          console.log(today);
           const habitArray = Object.keys(habits)
             .map((habitName) => ({
               name: habitName,
@@ -51,7 +50,6 @@ export default function Home() {
             .filter((habit) => {
               return habit.selectedDays?.includes(today);
             });
-          console.log(habitArray);
           setHabitList(habitArray);
         } catch (err) {
           console.log(err);
