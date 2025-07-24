@@ -1,12 +1,5 @@
-import { useState, useEffect } from "react";
-import {
-  ScrollView,
-  View,
-  StyleSheet,
-  Button,
-  Pressable,
-  Text,
-} from "react-native";
+import { useCallback, useState, useEffect } from "react";
+import { ScrollView, View, StyleSheet, Text, Alert } from "react-native";
 import {
   useAudioPlayer,
   useAudioRecorder,
@@ -20,11 +13,11 @@ import {
   Inter_400Regular,
   Inter_700Bold,
 } from "@expo-google-fonts/inter";
+import { useFocusEffect } from "@react-navigation/native";
 import Fonts from "@/constants/fonts";
 import AssistantButton from "@/components/AssistantButton";
 import colors from "@/constants/colors";
 import Habit from "@/components/Habit";
-import QuantativeHabit from "@/components/QuantativeHabit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Home() {
@@ -32,54 +25,42 @@ export default function Home() {
     [Fonts.regular]: Inter_400Regular,
     [Fonts.bold]: Inter_700Bold,
   });
+
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(audioRecorder);
   const audioPlayer = useAudioPlayer("");
+
   const [assistantActive, setAssistantActive] = useState(false);
-  const [habits, setHabits] = useState(["Habbit 1", "Habbit 2"]);
+  const [habitList, setHabitList] = useState([]);
 
-  const addHabit = () => {
-    setHabits([...habits, `Habit ${habits.length + 1}`]);
-  };
+  // Load habits from AsyncStorage
 
-  const startRecording = async () => {
-    await audioRecorder.prepareToRecordAsync();
-    audioRecorder.record();
-  };
+  useFocusEffect(
+    useCallback(() => {
+      const loadHabits = async () => {
+        try {
+          const value = await AsyncStorage.getItem("@habits");
+          const habits = value ? JSON.parse(value) : {};
+          const today = new Date().getDay();
+          console.log(today);
+          const habitArray = Object.keys(habits)
+            .map((habitName) => ({
+              name: habitName,
+              ...habits[habitName],
+            }))
+            .filter((habit) => {
+              return habit.selectedDays?.includes(today);
+            });
+          console.log(habitArray);
+          setHabitList(habitArray);
+        } catch (err) {
+          console.log(err);
+        }
+      };
 
-  const stopRecording = async () => {
-    // The recording will be available on `audioRecorder.uri`.
-    await audioRecorder.stop();
-    audioPlayer.replace(audioRecorder.uri);
-  };
-
-  const playRecording = async () => {
-    console.log("Play");
-    console.log(audioPlayer.duration);
-    audioPlayer.play();
-  };
-
-  const handleButtonPress = async () => {
-    try {
-      setAssistantActive(!assistantActive);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const displayHabits = async () => {
-    try {
-      const value = await AsyncStorage.getItem("@habits");
-
-      const habits = JSON.parse(value);
-      Object.keys(habits).forEach((habitName) => {
-        const habit = habits[habitsName];
-        return <Habit name={habitName} />;
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
+      loadHabits();
+    }, []), // no dependencies — just reload on tab focus
+  );
   useEffect(() => {
     (async () => {
       const status = await AudioModule.requestRecordingPermissionsAsync();
@@ -94,17 +75,25 @@ export default function Home() {
     })();
   }, []);
 
+  const handleButtonPress = () => {
+    setAssistantActive((prev) => !prev);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.habitsHeader}>
         <Text style={styles.header}>Habits</Text>
       </View>
+
       <ScrollView
         style={styles.mainContainer}
         contentContainerStyle={{ flexGrow: 1 }}
       >
-        {displayHabits}
+        {habitList.map((habit) => (
+          <Habit key={habit.name} name={habit.name} streak={habit.streak} />
+        ))}
       </ScrollView>
+
       <View style={styles.assistantContainer}>
         <AssistantButton
           onPress={handleButtonPress}
@@ -140,7 +129,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  assistantButton: {},
   habitsHeader: {
     flex: 0.1,
     justifyContent: "center",
