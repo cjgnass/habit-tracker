@@ -59,8 +59,14 @@ export default function Home() {
     audioPlayer.play();
   };
 
-  const handleButtonPress = () => {
-    setAssistantActive(!assistantActive);
+  const handleButtonPress = async () => {
+    try {
+      setAssistantActive(!assistantActive);
+      const value = await AsyncStorage.getItem("@habits");
+      console.log(value);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   useEffect(() => {

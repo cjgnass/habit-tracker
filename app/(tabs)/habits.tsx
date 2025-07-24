@@ -14,24 +14,50 @@ import colors from "@/constants/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Fonts from "@/constants/fonts";
 import BackIcon from "@/components/BackIcon";
+import DayButtons from "@/components/DayButtons";
 
 export default function Habits() {
   const [addingHabit, setAddingHabit] = useState(false);
   const mainButtonSize = 50;
   const [loading, setLoading] = useState(false);
-  const [habit, setHabit] = useState("");
-  const [number, setNumber] = useState(0);
-  const [schedule, setSchedule] = useState("");
+  const [habitName, setHabitName] = useState("");
+  const [timesPerDay, setTimesPerDay] = useState(1);
+  const [selectedDays, setSelectedDays] = useState([]);
 
   const handleBack = () => {
     setAddingHabit(false);
     setHabit("");
-    setNumber(0);
-    setSchedule("");
+    setTimesPerDay(0);
+    setSelectedDays([]);
   };
 
-  const handleAddHabit = () => {
-    console.log(`Adding Habit: ${habit}, ${number}, ${schedule}`);
+  const handleAddHabit = async () => {
+    try {
+      const habit = {
+        habitName,
+        timesPerDay: parseInt(timesPerDay),
+        selectedDays,
+        streak: 0,
+        daysScheduled: {},
+        createdAt: new Date(),
+      };
+      const habitsJson = await AsyncStorage.getItem("@habits");
+      const habits = habitsJson ? JSON.parse(habitsJson) : [];
+      habits.push(habit);
+      await AsyncStorage.setItem("@habits", JSON.stringify(habits));
+      console.log(habit);
+      // handleBack();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const toggleDay = (dayIndex) => {
+    setSelectedDays(
+      (prevDays) =>
+        prevDays.includes(dayIndex)
+          ? prevDays.filter((d) => d !== dayIndex) // remove day if already selected
+          : [...prevDays, dayIndex], // add day if not selected
+    );
   };
 
   const render = () => {
@@ -74,8 +100,8 @@ export default function Habits() {
           <View style={styles.addHabitContainer}>
             <Text style={styles.addHabitText}>Habit : </Text>
             <TextInput
-              value={habit}
-              onChangeText={setHabit}
+              value={habitName}
+              onChangeText={setHabitName}
               style={styles.addHabitTextInput}
             />
           </View>
@@ -83,19 +109,15 @@ export default function Habits() {
           <View style={styles.addHabitContainer}>
             <Text style={styles.addHabitText}>Number : </Text>
             <TextInput
-              value={number}
-              onChangeText={setNumber}
+              value={timesPerDay}
+              onChangeText={setTimesPerDay}
               style={styles.addHabitTextInput}
               keyboardType="number-pad"
             />
           </View>
-          <View style={styles.addHabitContainer}>
+          <View>
             <Text style={styles.addHabitText}>Schedule : </Text>
-            <TextInput
-              value={schedule}
-              onChangeText={setSchedule}
-              style={styles.addHabitTextInput}
-            />
+            <DayButtons selectedDays={selectedDays} onToggle={toggleDay} />
           </View>
           <Pressable style={styles.confirmAddHabit} onPress={handleAddHabit}>
             <Text style={styles.addHabitText}>Confirm</Text>
