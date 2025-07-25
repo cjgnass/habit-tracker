@@ -7,9 +7,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: styles.tabBarStyle,
-        tabBarActiveTintColor: colors.button,
-        tabBarInactiveTintColor: colors.primary,
+        tabBarStyle: { display: "none" },
       }}
     >
       <Tabs.Screen
@@ -24,10 +22,4 @@ export default function TabLayout() {
   );
 }
 
-const styles = StyleSheet.create({
-  tabBarStyle: {
-    backgroundColor: colors.secondary,
-    borderColor: colors.secondary,
-    height: "8%",
-  },
-});
+const styles = StyleSheet.create({});

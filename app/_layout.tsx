@@ -13,10 +13,7 @@ export default function RootLayout() {
     <View style={styles.container}>
       {/* Top inset (status bar area) */}
       <View
-        style={[
-          styles.inset,
-          { height: insets.top, backgroundColor: colors.background },
-        ]}
+        style={[styles.inset, { height: insets.top, backgroundColor: "black" }]}
       />
 
       {/* Main safe area content */}
@@ -25,12 +22,6 @@ export default function RootLayout() {
       </SafeAreaView>
 
       {/* Bottom inset (home indicator / gesture area) */}
-      <View
-        style={[
-          styles.inset,
-          { height: insets.bottom, backgroundColor: colors.secondary },
-        ]}
-      />
     </View>
   );
 }
